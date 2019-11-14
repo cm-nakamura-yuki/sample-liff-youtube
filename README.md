@@ -1,0 +1,2 @@
+# sample-liff-youtube
+LIFFでYoutube再生後にクーポンをLINE公式アカウントに送信するサンプル
