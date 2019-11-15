@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>クーポンGet！</title>
+</head>
+
+<body>
+
+    <body>
+        <div id="player"></div>
+
+        <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+        <script>
+            liff.init(
+                {
+                    liffId: 'xxxxxxxxxxxxxxx'
+                }
+            ).then(() => {
+            }).catch((err) => {
+                alert(err);
+            });
+
+            let player;
+            let status = false;
+            let tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+
+            let firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('player', {
+                    height: '360',
+                    width: '640',
+                    videoId: 'VWRG_CU4bqc',
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            }
+
+            function onPlayerReady(event) {
+                event.target.playVideo();
+            }
+
+            function onPlayerStateChange(event) {
+                if (event.data == YT.PlayerState.ENDED && !status) {
+                    if (liff.isInClient()) {
+                        liff.sendMessages([
+                            {
+                                type: 'text',
+                                text: 'ご視聴いただきありがとうございます。店舗でこちらのQRコードを店員にお見せください。'
+                            },
+                            {
+                                type: 'image',
+                                originalContentUrl: 'https://d2m1p9h7y3k5h.cloudfront.net/img/careers.png',
+                                previewImageUrl: 'https://d2m1p9h7y3k5h.cloudfront.net/img/careers.png'
+                            }
+                        ]).then(() => {
+                            status = true; //TODO: 何回でもクーポンGETできちゃうのでLINE IDによる管理が必要
+                            liff.closeWindow();
+                        }).catch((err) => {
+                            alert(err);
+                        });
+                    } else {
+                        alert('ご視聴いただきありがとうございます。クーポンを受け取るにはLINE公式アカウントから開く必要があります。');
+                    }
+                }
+            }
+        </script>
+    </body>
+
+</html>
